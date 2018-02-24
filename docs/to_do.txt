@@ -1,0 +1,18 @@
+BETA List
+    *   Create simualted test signal script; export data to file
+    *   Create script script to load test data
+    *   Create script to graph test data
+    *   Expand on the number of test data files
+    *   Create script to combine test signals
+    *   Create script to transmit test data using coap
+    *   Research other streaming protocols for sensors
+    *   Create coap server
+    *   Add capability to graph coap server data
+    *   Create flask app to display server data
+    *   Add DB to flask app
+    *   Research use of real sound signals
+    *   Research use of real video images
+    *   Research use of low rate data: temp/humidity
+    *   Create docker file for coaptransmitter
+    *   Create docker file for coap server
+    *   Create docker file for flask app
