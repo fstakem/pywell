@@ -3,8 +3,8 @@
         {
             "type": "sine",
             "amplitude": [1, 2],
-            "frequency": 1000,
-            "sampling_rate": 10000,
+            "frequency": 1,
+            "sampling_rate": 100,
             "duration_sec": 1
         },
         {

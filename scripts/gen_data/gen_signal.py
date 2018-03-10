@@ -11,9 +11,10 @@ import numpy as np
 raw_path = os.path.dirname(os.path.realpath(__file__))
 path = pathlib.PurePosixPath(raw_path)
 config_path = path / 'signal_params.json'
-export_path = path / 'out' / 'signal.txt'
+export_path = path / 'signals' / 'signal.txt'
 
 Signal = namedtuple('Signal', 'type timestamps values')
+
 
 def import_config(path):
     with open(path, 'r') as json_file:

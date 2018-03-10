@@ -1,5 +1,7 @@
 numpy
 scipy
 pandas
+matplotlib
+bokeh
 ipython
 ipdb

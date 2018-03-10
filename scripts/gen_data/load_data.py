@@ -4,10 +4,11 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 
+
 # Script params
 raw_path = os.path.dirname(os.path.realpath(__file__))
 path = pathlib.PurePosixPath(raw_path)
-data_path = path / 'out' / 'signal.txt'
+data_path = path / 'signals' / 'signal.txt'
 
 
 def load_data(path):
