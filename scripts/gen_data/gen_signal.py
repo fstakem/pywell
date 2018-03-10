@@ -13,7 +13,7 @@ path = pathlib.PurePosixPath(raw_path)
 config_path = path / 'signal_params.json'
 export_path = path / 'out' / 'signal.txt'
 
-Signal = namedtuple('Signal', 'type time values')
+Signal = namedtuple('Signal', 'type timestamps values')
 
 def import_config(path):
     with open(path, 'r') as json_file:
@@ -29,6 +29,8 @@ def create_signals(config):
         if signal['type'] == 'sine':
             wave = create_sine(start_time, signal)
             signals.append(wave)
+        else:
+            print('Signal unknown')
 
     return signals
 
@@ -56,11 +58,15 @@ def scale_amp(signal, min_value, max_value):
     return scale * signal
 
 def export_signals(path, signals):
-    raw_signals = [x.values for x in signals]
-    comb_signal = np.concatenate(raw_signals, axis=0)
+    raw_times = [s.timestamps for s in signals]
+    comb_times = np.concatenate(raw_times, axis=0)
+
+    raw_values = [s.values for s in signals]
+    comb_values = np.concatenate(raw_values, axis=0)
 
     with open(path, 'w') as f:
-        pass
+        for t, v in zip(comb_times, comb_values):
+            f.write('{},{}\n'.format(t, v))
 
 
 def run():
@@ -71,4 +77,3 @@ def run():
 
 if __name__ == '__main__':
     run()
-

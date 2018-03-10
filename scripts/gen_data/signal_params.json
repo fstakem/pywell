@@ -6,6 +6,9 @@
             "frequency": 1000,
             "sampling_rate": 10000,
             "duration_sec": 1
+        },
+        {
+            "type": "white_noise"
         }
     ]
     
