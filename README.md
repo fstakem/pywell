@@ -4,11 +4,9 @@ Pywell is a project intended to be used as a source of real and simulated sensor
 
 
 ## Stage 1: ToDo 2.24.18
-```diff
-- 1. Create script to simulate test sine wave; export output to file
-- 2.  Create script to load test data
-- 3.  Create script to run through test data and graph
-```
+1. Create script to simulate test sine wave; export output to file
+2.  Create script to load test data
+3.  Create script to run through test data and graph
 4.  Create script to load test data mix and export to new file
 5.  Create docker container for generating test data
 6.  Create multiple simple test data files
