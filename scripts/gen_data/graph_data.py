@@ -8,11 +8,13 @@ from bokeh.plotting import figure, show, save, output_file
 from load_data import load_data, adjust_time
 
 
+# Graph data from file
+
 # Script params
 raw_path = os.path.dirname(os.path.realpath(__file__))
 path = pathlib.PurePosixPath(raw_path)
-data_path = path / 'signals' / 'signal.txt'
-graph_path = path / 'graphs' / 'output.html'
+data_path = path / 'signals' / 'signal_c.txt'
+graph_path = path / 'graphs' / 'output_c.html'
 
 
 def graph_time_domain(df, path):

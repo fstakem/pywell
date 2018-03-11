@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 
+# Load data from file
+
 # Script params
 raw_path = os.path.dirname(os.path.realpath(__file__))
 path = pathlib.PurePosixPath(raw_path)

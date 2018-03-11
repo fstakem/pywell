@@ -7,11 +7,13 @@ from collections import namedtuple
 import numpy as np
 
 
+# Import params from file and concatenate signals in order
+
 # Script params
 raw_path = os.path.dirname(os.path.realpath(__file__))
 path = pathlib.PurePosixPath(raw_path)
 config_path = path / 'signal_params.json'
-export_path = path / 'signals' / 'signal.txt'
+export_path = path / 'signals' / 'signal_b.txt'
 
 Signal = namedtuple('Signal', 'type timestamps values')
 
@@ -58,7 +60,7 @@ def scale_amp(signal, min_value, max_value):
 
     return scale * signal
 
-def export_signals(path, signals):
+def export_signal(path, signals):
     raw_times = [s.timestamps for s in signals]
     comb_times = np.concatenate(raw_times, axis=0)
 
@@ -73,7 +75,7 @@ def export_signals(path, signals):
 def run():
     config = import_config(config_path)
     signals = create_signals(config)
-    export_signals(export_path, signals)
+    export_signal(export_path, signals)
 
 
 if __name__ == '__main__':
