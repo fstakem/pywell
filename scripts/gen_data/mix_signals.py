@@ -4,6 +4,7 @@ from datetime import datetime
 
 import pandas as pd
 
+from gen_signal import export_signal
 from load_data import load_data, adjust_time
 
 
@@ -29,11 +30,6 @@ def mix_signals(df_a, df_b):
     df.rename(columns={0: 'Values'}, inplace=True)
 
     return df
-
-def export_signal(path, df):
-    with open(path, 'w') as f:
-        for i in range(len(df)):
-            f.write('{},{}\n'.format(df.index[i], df.Values[i]))
 
 def run():
     df_a = load_data(data_a_path)

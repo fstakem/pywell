@@ -1,15 +1,36 @@
 {
-    "signals": [
+    "segments": [
         {
-            "type": "sine",
-            "amplitude": [1, 2],
-            "frequency": 1,
-            "sampling_rate": 100,
-            "duration_sec": 1
+            "components": [
+                {
+                    "type": "sine",
+                    "amplitude": [1, 2],
+                    "frequency": 1,
+                    "sampling_rate": 100,
+                    "duration_sec": 1
+                },
+                {
+                    "type": "sine",
+                    "amplitude": [1, 2],
+                    "frequency": 1,
+                    "sampling_rate": 100,
+                    "duration_sec": 1
+                }
+            ]
         },
         {
-            "type": "white_noise"
+            "components": [
+                {
+                    "type": "sine",
+                    "amplitude": [1, 2],
+                    "frequency": 1,
+                    "sampling_rate": 100,
+                    "duration_sec": 1
+                },
+                {
+                    "type": "white_noise"
+                }
+            ]
         }
     ]
-    
 }

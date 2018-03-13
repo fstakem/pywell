@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from collections import namedtuple
 
 import numpy as np
+import pandas as pd
 
 
 # Import params from file and concatenate signals in order
@@ -13,9 +14,7 @@ import numpy as np
 raw_path = os.path.dirname(os.path.realpath(__file__))
 path = pathlib.PurePosixPath(raw_path)
 config_path = path / 'signal_params.json'
-export_path = path / 'signals' / 'signal_b.txt'
-
-Signal = namedtuple('Signal', 'type timestamps values')
+export_path = path / 'signals' / 'signal_d.txt'
 
 
 def import_config(path):
@@ -24,18 +23,38 @@ def import_config(path):
 
     return config
 
-def create_signals(config):
+def create_signal(config):
     start_time = datetime.utcnow()
-    signals = []
+    raw_segments = config['segments']
+    signal = pd.DataFrame()
 
-    for signal in config['signals']:
-        if signal['type'] == 'sine':
-            wave = create_sine(start_time, signal)
-            signals.append(wave)
+    for s in raw_segments:
+        components = create_components(start_time, s['components'])
+        df = mix_components(components)
+        signal = signal.append(df)
+        start_time = df.index[-1]
+
+    return signal
+
+def create_components(start_time, raw_components):
+    components = []
+
+    for component in raw_components:
+        if component['type'] == 'sine':
+            signal = create_sine(start_time, component)
+            components.append(signal)
         else:
             print('Signal unknown')
 
-    return signals
+    return components
+
+def mix_components(components):
+    df_comb = pd.concat(components, ignore_index=True, axis=1)
+    series_sum = df_comb.sum(axis=1)
+    df = series_sum.to_frame()
+    df.rename(columns={0:'val'}, inplace=True)
+
+    return df
 
 def create_sine(start_time, params):
     sampling_rate = params['sampling_rate']
@@ -53,29 +72,27 @@ def create_sine(start_time, params):
     y = np.sin(2 * np.pi * freq * x / sampling_rate)
     y = scale_amp(y, min_value, max_value)
 
-    return Signal('sine', t, y)
+    df = pd.DataFrame(y)
+    df.index = df.index = pd.DatetimeIndex(t)
+    df.index.name = 'time'
+    df.rename(columns={0: 'val'}, inplace=True)
+
+    return df
 
 def scale_amp(signal, min_value, max_value):
     scale = np.arange(min_value, max_value, len(signal))
 
     return scale * signal
 
-def export_signal(path, signals):
-    raw_times = [s.timestamps for s in signals]
-    comb_times = np.concatenate(raw_times, axis=0)
-
-    raw_values = [s.values for s in signals]
-    comb_values = np.concatenate(raw_values, axis=0)
-
+def export_signal(path, df):
     with open(path, 'w') as f:
-        for t, v in zip(comb_times, comb_values):
-            f.write('{},{}\n'.format(t, v))
-
+        for i in range(len(df)):
+            f.write('{},{}\n'.format(df.index[i], df.val[i]))
 
 def run():
     config = import_config(config_path)
-    signals = create_signals(config)
-    export_signal(export_path, signals)
+    signal = create_signal(config)
+    export_signal(export_path, signal)
 
 
 if __name__ == '__main__':
