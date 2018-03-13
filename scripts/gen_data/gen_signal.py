@@ -25,23 +25,24 @@ def import_config(path):
 
 def create_signal(config):
     start_time = datetime.utcnow()
+    sampling_rate = config['samples_sec']
     raw_segments = config['segments']
     signal = pd.DataFrame()
 
     for s in raw_segments:
-        components = create_components(start_time, s['components'])
+        components = create_components(start_time, s['components'], sampling_rate)
         df = mix_components(components)
         signal = signal.append(df)
         start_time = df.index[-1]
 
     return signal
 
-def create_components(start_time, raw_components):
+def create_components(start_time, raw_components, sampling_rate):
     components = []
 
     for component in raw_components:
         if component['type'] == 'sine':
-            signal = create_sine(start_time, component)
+            signal = create_sine(start_time, component, sampling_rate)
             components.append(signal)
         else:
             print('Signal unknown')
@@ -56,8 +57,7 @@ def mix_components(components):
 
     return df
 
-def create_sine(start_time, params):
-    sampling_rate = params['sampling_rate']
+def create_sine(start_time, params, sampling_rate):
     freq = params['frequency']
     duration = params['duration_sec']
     min_value = params['amplitude'][0]

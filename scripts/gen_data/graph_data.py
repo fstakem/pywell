@@ -13,8 +13,8 @@ from load_data import load_data, adjust_time
 # Script params
 raw_path = os.path.dirname(os.path.realpath(__file__))
 path = pathlib.PurePosixPath(raw_path)
-data_path = path / 'signals' / 'signal_c.txt'
-graph_path = path / 'graphs' / 'output_c.html'
+data_path = path / 'signals' / 'signal_d.txt'
+graph_path = path / 'graphs' / 'output_d.html'
 
 
 def graph_time_domain(df, path):
