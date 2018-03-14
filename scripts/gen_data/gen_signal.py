@@ -30,19 +30,23 @@ def create_signal(config):
     signal = pd.DataFrame()
 
     for s in raw_segments:
-        components = create_components(start_time, s['components'], sampling_rate)
+        components = create_segment(start_time, s, sampling_rate)
         df = mix_components(components)
         signal = signal.append(df)
         start_time = df.index[-1]
 
     return signal
 
-def create_components(start_time, raw_components, sampling_rate):
+def create_segment(start_time, raw_segment, sampling_rate):
+    duration = raw_segment['duration_sec']
     components = []
 
-    for component in raw_components:
+    for component in raw_segment['components']:
         if component['type'] == 'sine':
-            signal = create_sine(start_time, component, sampling_rate)
+            signal = create_sine(start_time, component, sampling_rate, duration)
+            components.append(signal)
+        elif component['type'] == 'dc':
+            signal = create_dc_offset(start_time, component, sampling_rate, duration)
             components.append(signal)
         else:
             print('Signal unknown')
@@ -57,9 +61,8 @@ def mix_components(components):
 
     return df
 
-def create_sine(start_time, params, sampling_rate):
+def create_sine(start_time, params, sampling_rate, duration):
     freq = params['frequency']
-    duration = params['duration_sec']
     min_value = params['amplitude'][0]
     max_value = params['amplitude'][1]
 
@@ -72,17 +75,33 @@ def create_sine(start_time, params, sampling_rate):
     y = np.sin(2 * np.pi * freq * x / sampling_rate)
     y = scale_amp(y, min_value, max_value)
 
+    return to_df(t, y)
+
+def scale_amp(signal, min_value, max_value):
+    step = (max_value - min_value) / len(signal)
+    scale = np.arange(min_value, max_value, step)
+
+    return scale * signal
+
+def create_dc_offset(start_time, component, sampling_rate, duration):
+    amplitude = component['amplitude']
+    num_samples = duration * sampling_rate
+    sampling_interval = 1 / sampling_rate
+    sampling_interval = timedelta(seconds=sampling_interval)
+
+    x = np.arange(num_samples)
+    t = [start_time +  i * sampling_interval for i in x]
+    y = [amplitude] * num_samples
+
+    return to_df(t, y)
+
+def to_df(x, y):
     df = pd.DataFrame(y)
-    df.index = df.index = pd.DatetimeIndex(t)
+    df.index = df.index = pd.DatetimeIndex(x)
     df.index.name = 'time'
     df.rename(columns={0: 'val'}, inplace=True)
 
     return df
-
-def scale_amp(signal, min_value, max_value):
-    scale = np.arange(min_value, max_value, len(signal))
-
-    return scale * signal
 
 def export_signal(path, df):
     with open(path, 'w') as f:

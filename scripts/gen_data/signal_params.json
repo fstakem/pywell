@@ -2,32 +2,33 @@
     "samples_sec": 100,
     "segments": [
         {
+            "duration_sec": 1,
             "components": [
                 {
                     "type": "sine",
                     "amplitude": [1, 2],
-                    "frequency": 1,
-                    "sampling_rate": 100,
-                    "duration_sec": 1
+                    "frequency": 1
                 },
                 {
-                    "type": "sine",
-                    "amplitude": [1, 2],
-                    "frequency": 1,
-                    "duration_sec": 1
+                    "type": "dc",
+                    "amplitude": 2
                 }
             ]
         },
         {
+            "duration_sec": 1,
             "components": [
                 {
                     "type": "sine",
-                    "amplitude": [1, 2],
-                    "frequency": 1,
-                    "duration_sec": 1
+                    "amplitude": [1, 4],
+                    "frequency": 1
                 },
                 {
                     "type": "white_noise"
+                },
+                {
+                    "type": "dc",
+                    "amplitude": 2
                 }
             ]
         }
