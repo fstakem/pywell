@@ -57,6 +57,16 @@
                     "amplitude": 2
                 }
             ]
+        },
+        {
+            "duration_sec": 1,
+            "components": [
+                {
+                    "type": "sawtooth",
+                    "amplitude": [1, 4],
+                    "num_of_cycles": 3
+                }
+            ]
         }
     ]
 }

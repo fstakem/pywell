@@ -7,6 +7,7 @@ from random import gauss
 
 import numpy as np
 import pandas as pd
+from scipy.signal import sawtooth
 
 
 # Import params from file and concatenate signals in order
@@ -57,6 +58,9 @@ def create_segment(start_time, raw_segment, sampling_rate):
             components.append(signal)
         elif component['type'] == 'impulse':
             signal = create_impulse(start_time, component, sampling_rate, duration)
+            components.append(signal)
+        elif component['type'] == 'sawtooth':
+            signal = create_sawtooth(start_time, component, sampling_rate, duration)
             components.append(signal)
         else:
             print('Signal unknown')
@@ -150,6 +154,23 @@ def create_impulse(start_time, params, sampling_rate, duration):
     imp = [amplitude]
     zeros = [0] * (num_samples - 1)
     y = imp + zeros
+
+    return to_df(t, y)
+
+def create_sawtooth(start_time, params, sampling_rate, duration):
+    min_value = params['amplitude'][0]
+    max_value = params['amplitude'][1]
+    num_of_cycles = params['num_of_cycles']
+    num_samples = int(duration * sampling_rate)
+    sampling_interval = 1 / sampling_rate
+    sampling_interval = timedelta(seconds=sampling_interval)
+
+    # TODO
+    x = np.arange(num_samples)
+    t = [start_time +  i * sampling_interval for i in x]
+    x = np.linspace(0, 1, num_samples)
+    y = sawtooth(2 * np.pi * num_of_cycles * x)
+    y = scale_amp(y, min_value, max_value)
 
     return to_df(t, y)
 
