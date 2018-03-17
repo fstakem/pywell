@@ -46,6 +46,9 @@ def create_segment(start_time, raw_segment, sampling_rate):
         if component['type'] == 'sine':
             signal = create_sine(start_time, component, sampling_rate, duration)
             components.append(signal)
+        elif component['type'] == 'cos':
+            signal = create_cos(start_time, component, sampling_rate, duration)
+            components.append(signal)
         elif component['type'] == 'dc':
             signal = create_dc_offset(start_time, component, sampling_rate, duration)
             components.append(signal)
@@ -73,7 +76,7 @@ def create_sine(start_time, params, sampling_rate, duration):
     min_value = params['amplitude'][0]
     max_value = params['amplitude'][1]
 
-    num_samples = duration * sampling_rate
+    num_samples = int(duration * sampling_rate)
     sampling_interval = 1 / sampling_rate
     sampling_interval = timedelta(seconds=sampling_interval)
     
@@ -84,8 +87,29 @@ def create_sine(start_time, params, sampling_rate, duration):
 
     return to_df(t, y)
 
+def create_cos(start_time, params, sampling_rate, duration):
+    freq = params['frequency']
+    min_value = params['amplitude'][0]
+    max_value = params['amplitude'][1]
+
+    num_samples = int(duration * sampling_rate)
+    sampling_interval = 1 / sampling_rate
+    sampling_interval = timedelta(seconds=sampling_interval)
+    
+    x = np.arange(num_samples)
+    t = [start_time +  i * sampling_interval for i in x]
+    y = np.cos(2 * np.pi * freq * x / sampling_rate)
+    y = scale_amp(y, min_value, max_value)
+
+    return to_df(t, y)
+
 def scale_amp(signal, min_value, max_value):
-    step = (max_value - min_value) / len(signal)
+    delta = max_value - min_value
+
+    if delta == 0:
+        return signal
+
+    step = delta / len(signal)
     scale = np.arange(min_value, max_value, step)
 
     return scale * signal
