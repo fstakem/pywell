@@ -62,6 +62,9 @@ def create_segment(start_time, raw_segment, sampling_rate):
         elif component['type'] == 'sawtooth':
             signal = create_sawtooth(start_time, component, sampling_rate, duration)
             components.append(signal)
+        elif component['type'] == 'square':
+            signal = create_square(start_time, component, sampling_rate, duration)
+            components.append(signal)
         else:
             print('Signal unknown')
 
@@ -165,12 +168,39 @@ def create_sawtooth(start_time, params, sampling_rate, duration):
     sampling_interval = 1 / sampling_rate
     sampling_interval = timedelta(seconds=sampling_interval)
 
-    # TODO
     x = np.arange(num_samples)
     t = [start_time +  i * sampling_interval for i in x]
     x = np.linspace(0, 1, num_samples)
     y = sawtooth(2 * np.pi * num_of_cycles * x)
     y = scale_amp(y, min_value, max_value)
+
+    return to_df(t, y)
+
+def create_square(start_time, params, sampling_rate, duration):
+    amplitude = params['amplitude']
+    num_of_cycles = params['num_of_cycles']
+    num_samples = int(duration * sampling_rate)
+    sampling_interval = 1 / sampling_rate
+    sampling_interval = timedelta(seconds=sampling_interval)
+
+    x = np.arange(num_samples)
+    t = [start_time +  i * sampling_interval for i in x]
+
+    sections = 2 * num_of_cycles
+    samples_per_section = int(num_samples / sections)
+    y = []
+
+    for i in range(sections):
+        if i % 2 == 0:
+            signal = [amplitude] * samples_per_section
+        else:
+            signal = [-amplitude] * samples_per_section
+
+        y.extend(signal)
+
+    diff = num_samples - len(y)
+    extra = [y[-1]] * diff
+    y.extend(extra)
 
     return to_df(t, y)
 

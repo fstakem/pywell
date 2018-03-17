@@ -67,6 +67,16 @@
                     "num_of_cycles": 3
                 }
             ]
+        },
+        {
+            "duration_sec": 1,
+            "components": [
+                {
+                    "type": "square",
+                    "amplitude": 2,
+                    "num_of_cycles": 3
+                }
+            ]
         }
     ]
 }
