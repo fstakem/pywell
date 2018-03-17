@@ -3,6 +3,7 @@ import os
 import pathlib
 from datetime import datetime, timedelta
 from collections import namedtuple
+from random import gauss
 
 import numpy as np
 import pandas as pd
@@ -48,6 +49,12 @@ def create_segment(start_time, raw_segment, sampling_rate):
         elif component['type'] == 'dc':
             signal = create_dc_offset(start_time, component, sampling_rate, duration)
             components.append(signal)
+        elif component['type'] == 'white_noise':
+            signal = create_white_noise(start_time, component, sampling_rate, duration)
+            components.append(signal)
+        elif component['type'] == 'impulse':
+            signal = create_impulse(start_time, component, sampling_rate, duration)
+            components.append(signal)
         else:
             print('Signal unknown')
 
@@ -83,15 +90,42 @@ def scale_amp(signal, min_value, max_value):
 
     return scale * signal
 
-def create_dc_offset(start_time, component, sampling_rate, duration):
-    amplitude = component['amplitude']
-    num_samples = duration * sampling_rate
+def create_dc_offset(start_time, params, sampling_rate, duration):
+    amplitude = params['amplitude']
+    num_samples = int(duration * sampling_rate)
     sampling_interval = 1 / sampling_rate
     sampling_interval = timedelta(seconds=sampling_interval)
 
     x = np.arange(num_samples)
     t = [start_time +  i * sampling_interval for i in x]
     y = [amplitude] * num_samples
+
+    return to_df(t, y)
+
+def create_white_noise(start_time, params, sampling_rate, duration):
+    mean = params['mean']
+    mu = params['mu']
+    num_samples = int(duration * sampling_rate)
+    sampling_interval = 1 / sampling_rate
+    sampling_interval = timedelta(seconds=sampling_interval)
+
+    x = np.arange(num_samples)
+    t = [start_time +  i * sampling_interval for i in x]
+    y = [gauss(mean, mu) for _ in range(num_samples)]
+
+    return to_df(t, y)
+
+def create_impulse(start_time, params, sampling_rate, duration):
+    amplitude = params['amplitude']
+    num_samples = int(duration * sampling_rate)
+    sampling_interval = 1 / sampling_rate
+    sampling_interval = timedelta(seconds=sampling_interval)
+
+    x = np.arange(num_samples)
+    t = [start_time +  i * sampling_interval for i in x]
+    imp = [amplitude]
+    zeros = [0] * (num_samples - 1)
+    y = imp + zeros
 
     return to_df(t, y)
 
